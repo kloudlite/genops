@@ -1,5 +1,6 @@
 "use server";
 import { UserRepo } from "@/orm";
+import { createHash } from "crypto";
 
 
 type Response<T> = {
@@ -7,11 +8,21 @@ type Response<T> = {
   error?: string;
 };
 
-export const login = async (username: string, password: string) => {
-  return {
-    username,
-    password,
-  };
+export const login = async ({username, password}:{username: string, password: string}) => {
+  const user = await UserRepo.findOne({ where: { username } });
+  if (!user) {
+    return { error: "UserNotFound" };
+  }
+
+  const hash = createHash("md5");
+  hash.update(password);
+  const hashedPassword = hash.digest("hex");
+
+  if (user.password !== hashedPassword) {
+    return { error: "InvalidPassword" };
+  }
+
+  return { data: true };
 };
 
 export const signup = async (
@@ -47,6 +58,12 @@ export const signup = async (
   if (existingUser) {
     return { error: "UserAlreadyRegistered" };
   }
+  
+  const hash = createHash("md5");
+  hash.update(password);
+  const hashedPassword = hash.digest("hex");
+  password = hashedPassword;
+
   const user = UserRepo.create({
     name,
     email,
