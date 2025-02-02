@@ -4,15 +4,11 @@ const Page = () => {
       <div className="flex flex-col w-full items-center justify-center h-full">
         <h2 className="text-2xl font-bold text-center mb-4">Sign In</h2>
 
-        <form className="flex flex-col p-4">
+        <form className="flex flex-col">
+
           <input
-            type="name"
-            placeholder="Name"
-            className=""
-          />
-          <input
-            type="email"
-            placeholder="Email"
+            type="username"
+            placeholder="Username"
             className=""
           />
           <input
@@ -26,7 +22,10 @@ const Page = () => {
           </button>
         </form>
 
-        
+        <p className="">
+          Dont have an account? <a href="#" className="text-blue-500">Sign Up</a>
+        </p>
+
       </div>
     </div>
   );
