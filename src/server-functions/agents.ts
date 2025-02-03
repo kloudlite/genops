@@ -44,9 +44,9 @@ export const getDeveloperAgents = async () => {
     };
   }
   const { username } = authResult.data;
-  const operators = await AgentsRepo.find({ where: { developer: username } });
+  const agents = await AgentsRepo.find({ where: { developer: username } });
   return {
-    data: operators,
+    data: agents,
   };
 };
 
@@ -58,18 +58,18 @@ export const deleteAgent = async (agentId: string) => {
     };
   }
   const { username } = authResult.data;
-  const operator = await AgentsRepo.findOne({ where: { id: agentId } });
-  if (!operator) {
+  const agent = await AgentsRepo.findOne({ where: { id: agentId } });
+  if (!agent) {
     return {
       error: "AgentNotFound",
     };
   }
-  if (operator.developer !== username) {
+  if (agent.developer !== username) {
     return {
       error: "Unauthorized",
     };
   }
-  await AgentsRepo.remove(operator);
+  await AgentsRepo.remove(agent);
   return {
     data: "AgentDeleted",
   };
