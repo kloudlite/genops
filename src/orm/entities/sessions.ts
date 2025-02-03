@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   BaseEntity,
   Column,
@@ -22,7 +21,7 @@ export class ChatSession extends BaseEntity {
   @Column()
   user: string;
 
-  @OneToMany(() => Message, (message) => message.session)
+  @OneToMany(() => Message, (message) => message.session, { cascade: true })
   messages: Message[];
 
   @Index()
