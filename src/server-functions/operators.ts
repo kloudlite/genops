@@ -27,8 +27,17 @@ export const getUserOperators = async () => {
   }
   const { username } = authResult.data;
   const operators = await OperatorsRepo.find({ where: { user: username } });
+  const sanitizedOperators = operators.map((operator) => ({
+    ...operator,
+    tools: Array.isArray(operator.tools)
+      ? operator.tools
+      : operator.tools
+      ? JSON.parse(JSON.stringify(operator.tools))
+      : [], // Ensure it's an array even if null/undefined
+  }));
   return {
-    data: operators
+    data:sanitizedOperators,
+
   };
 };
 
