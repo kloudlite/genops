@@ -18,6 +18,20 @@ export default function CreateButton() {
               name: "Test",
               desc: "Test Desc",
               source: "test-source",
+              params: [
+                {
+                  name:"Email",
+                  type:"string",
+                  required:true,
+                  defaultValue:""
+                },
+                {
+                  name:"Password",
+                  type:"secure-string",
+                  required:true,
+                  defaultValue:""
+                }
+              ]
             },
             {
               name: "Test2",

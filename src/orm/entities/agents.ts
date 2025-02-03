@@ -28,6 +28,12 @@ export class Agent extends BaseEntity {
     name: string;
     desc: string;
     source: string;
+    params?: Array<{
+      name: string;
+      type: string;
+      required: boolean;
+      defaultValue: string;
+    }>;
   }>;
   
 
