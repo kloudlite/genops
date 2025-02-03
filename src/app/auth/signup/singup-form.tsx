@@ -8,6 +8,33 @@ import { Eye, EyeOff } from "lucide-react"; // For toggle icons
 import Link from "next/link";
 import { useState } from "react";
 
+type FormErrors = {
+  name?: string;
+  email?: string;
+  username?: string;
+  password?: string;
+  general?: string;
+};
+
+const errorMapping: Record<string, Partial<FormErrors>> = {
+  NoName: { name: "Name is required" },
+  NoEmail: { email: "Email is required" },
+  NoUsername: { username: "Username is required" },
+  NoPassword: { password: "Password is required" },
+  InvalidEmail: { email: "Invalid email format" },
+  PasswordTooShort: {
+    password: "Password must be at least 8 characters",
+  },
+  UserAlreadyRegistered: {
+    email: "Email or Username already registered",
+    username: "Email or Username already registered",
+  },
+  ServerError: {
+    general: "An unexpected error occurred. Please try again later.",
+  },
+  default: { general: "Something went wrong, please try again." },
+};
+
 export const SignupForm = () => {
   const [data, setData] = useState({
     username: "",
@@ -15,13 +42,7 @@ export const SignupForm = () => {
     email: "",
     password: "",
   });
-  const [error, setError] = useState<{
-    name?: string;
-    email?: string;
-    username?: string;
-    password?: string;
-    general?: string;
-  }>({});
+  const [error, setError] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false); // Toggle State
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,24 +51,6 @@ export const SignupForm = () => {
     const result = await signup(data);
     console.log(result.error);
     if (result.error) {
-      const errorMapping: Record<string, Partial<typeof error>> = {
-        NoName: { name: "Name is required" },
-        NoEmail: { email: "Email is required" },
-        NoUsername: { username: "Username is required" },
-        NoPassword: { password: "Password is required" },
-        InvalidEmail: { email: "Invalid email format" },
-        PasswordTooShort: {
-          password: "Password must be at least 8 characters",
-        },
-        UserAlreadyRegistered: {
-          email: "Email or Username already registered",
-          username: "Email or Username already registered",
-        },
-        ServerError: {
-          general: "An unexpected error occurred. Please try again later.",
-        },
-        default: { general: "Something went wrong, please try again." },
-      };
       setError(errorMapping[result.error] || errorMapping.default);
     }
   };

@@ -8,16 +8,24 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+type FormErrors = {
+  username?: string;
+  password?: string;
+  general?: string;
+};
+
+const errorMapping: Record<string, Partial<FormErrors>> = {
+  UserNotFound: { username: "Incorrect email or password" },
+  InvalidPassword: { password: "Incorrect password! try again." },
+  default: { general: "Something went wrong, please try again." },
+};
+
 export const SingInForm = () => {
   const [data, setData] = useState({
     username: "",
     password: "",
   });
-  const [error, setError] = useState<{
-    username?: string;
-    password?: string;
-    general?: string;
-  }>({});
+  const [error, setError] = useState<FormErrors>({});
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,11 +34,6 @@ export const SingInForm = () => {
     setError({});
     const result = await login(data);
     if (result.error) {
-      const errorMapping: Record<string, Partial<typeof error>> = {
-        UserNotFound: { username: "Incorrect email or password" },
-        InvalidPassword: { password: "Incorrect password! try again." },
-        default: { general: "Something went wrong, please try again." },
-      };
       setError(errorMapping[result.error] || errorMapping.default);
     }
   };

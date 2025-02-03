@@ -2,6 +2,8 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { SignupForm } from "./singup-form";
 import { ScanFace } from "lucide-react";
 
+
+
 const Page = () => {
   return (
     <div className="flex flex-col items-center justify-center p-6 h-screen">
