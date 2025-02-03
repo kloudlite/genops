@@ -3,9 +3,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  JoinColumn,
 } from "typeorm";
 import { ChatSession } from "./sessions";
 
@@ -15,8 +15,8 @@ export class Message extends BaseEntity {
   id: string;
 
   @ManyToOne(() => ChatSession, (session) => session.messages, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "sessionId" })
-  session: ChatSession;
+  @JoinColumn()
+  session: Awaited<ChatSession>;
 
   @Column()
   sender: "user" | "model";

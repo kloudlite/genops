@@ -1,9 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BaseEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { ChatSession } from "./sessions";
 
 @Entity()
 export class Operator extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Index()
@@ -15,7 +24,7 @@ export class Operator extends BaseEntity {
 
   @Column("text")
   instruction: string;
-  
+
   @Index()
   @Column()
   user: string;
@@ -25,6 +34,9 @@ export class Operator extends BaseEntity {
     name: string;
     params?: Record<string, any>;
   }>;
+
+  @OneToMany(() => ChatSession, (chatSession) => chatSession.operator)
+  chatSessions: ChatSession[];
 
   @Index()
   @CreateDateColumn()

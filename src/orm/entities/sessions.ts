@@ -4,10 +4,13 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Message } from "./messages";
+import { Operator } from "./operators";
 
 @Entity()
 export class ChatSession extends BaseEntity {
@@ -21,12 +24,12 @@ export class ChatSession extends BaseEntity {
   @Column()
   user: string;
 
-  @OneToMany(() => Message, (message) => message.session, { cascade: true })
+  @OneToMany(() => Message, (message) => message.session)
   messages: Message[];
 
-  @Index()
-  @Column()
-  operator: string;
+  @ManyToOne(() => Operator, (operator) => operator.chatSessions, { onDelete: "CASCADE" })
+  @JoinColumn()
+  operator: Awaited<Operator>;
 
   @CreateDateColumn()
   createdAt: Date;

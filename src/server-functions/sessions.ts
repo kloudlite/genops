@@ -15,7 +15,7 @@ export const createChatSession = async (
   }
   const { username } = authResult.data;
   const chatSession = SessionsRepo.create({
-    operator: operatorId,
+    operator: { id: operatorId },
   });
   chatSession.user = username;
   await SessionsRepo.save(chatSession);
@@ -25,7 +25,7 @@ export const createChatSession = async (
     text: fistMessage,
   });
   await MessagesRepo.save(message);
-  return { data: { ...chatSession } };
+  return { data: JSON.parse(JSON.stringify(chatSession)) };
 };
 
 export const listUserSessionsForOperator = async (operatorId: string) => {
@@ -37,7 +37,14 @@ export const listUserSessionsForOperator = async (operatorId: string) => {
   }
   const { username } = authResult.data;
   const sessions = await SessionsRepo.find({
-    where: { user: username, operator: operatorId },
+    relations: ["operator"],
+    where: {
+      user: username,
+      operator: {
+        id: operatorId,
+      },
+    },
+    loadRelationIds: true,
   });
   return { data: sessions };
 };
