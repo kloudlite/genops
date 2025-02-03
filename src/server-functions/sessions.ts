@@ -1,6 +1,6 @@
 "use server";
 
-import { MessagesRepo, SessionsRepo } from "@/orm";
+import { MessagesRepo, ChatSessionsRepo } from "@/orm";
 import { checkAuth } from "./auth";
 
 export const createChatSession = async (
@@ -14,11 +14,11 @@ export const createChatSession = async (
     };
   }
   const { username } = authResult.data;
-  const chatSession = SessionsRepo.create({
+  const chatSession = ChatSessionsRepo.create({
     operator: { id: operatorId },
   });
   chatSession.user = username;
-  await SessionsRepo.save(chatSession);
+  await ChatSessionsRepo.save(chatSession);
   const message = MessagesRepo.create({
     session: chatSession,
     sender: "user",
@@ -36,7 +36,7 @@ export const listUserSessionsForOperator = async (operatorId: string) => {
     };
   }
   const { username } = authResult.data;
-  const sessions = await SessionsRepo.find({
+  const sessions = await ChatSessionsRepo.find({
     relations: ["operator"],
     where: {
       user: username,
@@ -55,13 +55,13 @@ export const deleteChatSession = async (sessionId: string) => {
     return { error: "AuthenticationFailed" };
   }
   const { username } = authResult.data;
-  const chatSession = await SessionsRepo.findOne({ where: { id: sessionId } });
+  const chatSession = await ChatSessionsRepo.findOne({ where: { id: sessionId } });
   if (!chatSession) {
     return { error: "SessionNotFound" };
   }
   if (chatSession.user !== username) {
     return { error: "Unauthorized" };
   }
-  await SessionsRepo.remove(chatSession);
+  await ChatSessionsRepo.remove(chatSession);
   return { data: "SessionDeleted" };
 };

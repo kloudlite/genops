@@ -1,6 +1,6 @@
 "use server";
 
-import { MessagesRepo, SessionsRepo } from "@/orm";
+import { MessagesRepo, ChatSessionsRepo } from "@/orm";
 import { checkAuth } from "./auth";
 
 export const sendMessage = async (text: string, sessionId: string) => {
@@ -10,7 +10,7 @@ export const sendMessage = async (text: string, sessionId: string) => {
       error: "AuthenticationFailed",
     };
   }
-  const chatSession = await SessionsRepo.findOne({ where: { id: sessionId } });
+  const chatSession = await ChatSessionsRepo.findOne({ where: { id: sessionId } });
   if (chatSession == null) {
     return {
       error: "Invalid session",
@@ -40,7 +40,7 @@ export const getSessionMessages = async (
       error: "Invalid session",
     };
   }
-  const session = await SessionsRepo.findOne({ where: { id: sessionId } });
+  const session = await ChatSessionsRepo.findOne({ where: { id: sessionId } });
   if (session == null) {
     return {
       error: "Invalid session",
