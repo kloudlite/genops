@@ -5,6 +5,24 @@ import { DeepPartial } from "typeorm";
 import { checkAuth } from "./auth";
 import { Agent } from "@/orm/entities/agents";
 
+export const getAgent = async (agentId: string) => {
+  const authResult = await checkAuth();
+  if (!authResult.data) {
+    return {
+      error: "AuthenticationFailed",
+    };
+  }
+  const agent = await AgentsRepo.findOne({ where: { id: agentId } });
+  if (!agent) {
+    return {
+      error: "AgentNotFound",
+    };
+  }
+  return {
+    data: agent,
+  };
+}
+
 export const createAnAgent = async (agentData: DeepPartial<Agent>) => {
   const authResult = await checkAuth();
   if (!authResult.data) {
