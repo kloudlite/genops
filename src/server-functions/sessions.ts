@@ -20,7 +20,7 @@ export const createChatSession = async (
   chatSession.user = username;
   await SessionsRepo.save(chatSession);
   const message = MessagesRepo.create({
-    sessionId: chatSession.id,
+    session: chatSession,
     sender: "user",
     text: fistMessage,
   });

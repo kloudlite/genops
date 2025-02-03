@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ChatSession } from "./sessions";
 
 @Entity()
 export class Message extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  sessionId: string;
+  @ManyToOne(() => ChatSession, (session) => session.messages, {cascade: true})
+  session: Awaited<ChatSession>;
 
   @Column()
   sender: "user" | "model";

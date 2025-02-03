@@ -1,10 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BaseEntity, Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Message } from "./messages";
 
 @Entity()
 export class ChatSession extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ default: "" })
@@ -14,8 +22,8 @@ export class ChatSession extends BaseEntity {
   @Column()
   user: string;
 
-  @OneToMany(() => Message, (message) => message.sessionId)
-  messages: Array<Message>;
+  @OneToMany(() => Message, (message) => message.session)
+  messages: Message[];
 
   @Index()
   @Column()
