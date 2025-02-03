@@ -1,11 +1,12 @@
 "use server";
 
 import { MessagesRepo, SessionsRepo } from "@/orm";
-import { DeepPartial } from "typeorm";
 import { checkAuth } from "./auth";
-import { Session } from "@/orm/entities/sessions";
 
-export const createChatSession = async (sessionData: DeepPartial<Session>, fistMessage: string) => {
+export const createChatSession = async (
+  operatorId: string,
+  fistMessage: string
+) => {
   const authResult = await checkAuth();
   if (!authResult.data) {
     return {
@@ -13,24 +14,32 @@ export const createChatSession = async (sessionData: DeepPartial<Session>, fistM
     };
   }
   const { username } = authResult.data;
-  const chatSession = SessionsRepo.create(sessionData);
+  const chatSession = SessionsRepo.create({
+    operator: operatorId,
+  });
   chatSession.user = username;
   await SessionsRepo.save(chatSession);
-  const message = MessagesRepo.create({ sessionId: chatSession.id, sender: "user", text: fistMessage }); 
+  const message = MessagesRepo.create({
+    sessionId: chatSession.id,
+    sender: "user",
+    text: fistMessage,
+  });
   await MessagesRepo.save(message);
-  return { data: chatSession };
+  return { data: { ...chatSession } };
 };
 
-export const listUserSessionsForOperator = async () => {
-    const authResult = await checkAuth();
-    if (!authResult.data) {
-      return {
-        error: "AuthenticationFailed",
-      };
-    }
-    const { username } = authResult.data;
-    const sessions = await SessionsRepo.find({ where: { user: username } });
-    return { data: sessions };
+export const listUserSessionsForOperator = async (operatorId: string) => {
+  const authResult = await checkAuth();
+  if (!authResult.data) {
+    return {
+      error: "AuthenticationFailed",
+    };
+  }
+  const { username } = authResult.data;
+  const sessions = await SessionsRepo.find({
+    where: { user: username, operator: operatorId },
+  });
+  return { data: sessions };
 };
 
 export const deleteChatSession = async (sessionId: string) => {
