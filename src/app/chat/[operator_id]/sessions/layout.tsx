@@ -1,7 +1,14 @@
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { listUserSessionsForOperator } from "@/server-functions/sessions";
-import { MessageSquareIcon } from "lucide-react";
+import { EllipsisVertical, MessageSquareIcon } from "lucide-react";
 import Link from "next/link";
+import { DeleteChatSessionButton } from "./client-side-components";
 
 export default async function Layout({
   params,
@@ -37,8 +44,19 @@ export default async function Layout({
                   key={session.id}
                   href={`/chat/${operator_id}/sessions/${session.id}`}
                 >
-                  <div className="p-4 border-b">
+                  <div className="p-4 border-b flex justify-between items-center group">
                     <div>{session.name || "New Chat"}</div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        asChild
+                        className="opacity-5 group-hover:opacity-100 transition-all"
+                      >
+                        <EllipsisVertical size={18} />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent side="bottom" align="end">
+                        <DeleteChatSessionButton id={session.id} />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </Link>
               );

@@ -1,34 +1,59 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { sendMessage } from "@/server-functions/messages";
+import { ArrowUp, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
-export const SendMessage = ({session_id}:{session_id: string}) => {
+export const SendMessage = ({ session_id }: { session_id: string }) => {
   const [msg, setMsg] = useState("");
   const router = useRouter();
-  return (
-    <form className="flex items-center gap-2 p-4 border-t bg-white"
-    onSubmit={async (e)=>{
-      e.preventDefault();
-      setMsg("")
-      const resp = await sendMessage(session_id, msg)
-      if (resp.error){
-        console.log(resp.error)
-        return
+  const handler = useCallback(async () => {
+    if (msg) {
+      const resp = await sendMessage(session_id, msg);
+      if (resp.error) {
+        return;
       }
-      router.refresh()
-    }}>
-      <input
-        type="text"
-        placeholder="Type a message..."
-        className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-        value={msg}
-        onChange={(e)=>{
-          setMsg(e.target.value);
-        }}
-      />
-      <Button className="p-2 bg-blue-300" type="submit">Send</Button>
+      setMsg("");
+      router.refresh();
+    }
+  }, [msg, session_id, router]);
+  return (
+    <form
+      className="relative flex gap-1 max-w-full w-3/4 group"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        handler();
+      }}
+    >
+      <div className="w-full bg-white rounded-3xl focus-within:shadow-sm focus-within:border-slate-400 overflow-clip border border-slate-200 transition-all p-4">
+        <textarea
+          rows={5}
+          value={msg}
+          placeholder="Type a message..."
+          onChange={(e) => {
+            setMsg(e.target.value);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              if (!e.shiftKey) {
+                handler();
+                e.preventDefault();
+                e.currentTarget.blur();
+              }
+            }
+          }}
+          className=" border-none outline-none h-12 sticky bottom-0 w-full "
+        />
+      </div>
+
+      <div className="absolute right-1 bottom-2 p-1">
+        <Button className="rounded-full h-12" type="submit" disabled={!msg}>
+          <ArrowUp />
+        </Button>
+      </div>
     </form>
   );
 };

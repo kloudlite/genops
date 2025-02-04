@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   createChatSession,
@@ -30,18 +31,19 @@ export function CreateChatButton() {
   );
 }
 
-export function DeleteButton({ id }: { id: string }) {
+export function DeleteChatSessionButton({ id }: { id: string }) {
   const router = useRouter();
+  const {operator_id} = useParams();
   return (
-    <button
+    <DropdownMenuItem
       onClick={async () => {
         await deleteChatSession(id);
+        router.replace(`/chat/${operator_id}/sessions`);
         router.refresh();
       }}
-      className="px-4 py-2 bg-red-500 text-white rounded-md ml-2"
     >
-      Delete
-    </button>
+      <span className="text-destructive">Delete</span>
+    </DropdownMenuItem>
   );
 }
 
@@ -74,13 +76,12 @@ export function CreateSessionForm() {
         }}
         value={message}
       />
-      <Button
-        className="rounded-full h-full absolute right-0 top-0 bottom-0"
-        type="submit"
-      >
-        <Send />
-        Send
-      </Button>
+      <div className="absolute right-0 top-0 bottom-0 p-1">
+        <Button className="rounded-full h-full" type="submit">
+          <Send />
+          Send
+        </Button>
+      </div>
     </form>
   );
 }
