@@ -24,20 +24,45 @@ import { Agent } from "@/orm/entities/agents";
 import { getAgent } from "@/server-functions/agents";
 import { AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ArrowLeft, ArrowRight, HelpCircle } from "lucide-react";
-import { useEffect, useState } from "react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { useCallback, useEffect, useState } from "react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { createAnOperator } from "@/server-functions/operators";
+import { useRouter } from "next/navigation";
 
 export default function CreateOperatorForm({
   agentData,
 }: {
   agentData: { id: string; name: string }[] | undefined;
 }) {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState("basic_details");
   const [operatorName, setOperatorName] = useState("");
   const [agentId, setAgentId] = useState("");
   const [description, setDescription] = useState("");
   const [toolParams, setToolParams] = useState<Record<string, string>>({});
   const [agent, setAgent] = useState<Agent | undefined>(undefined);
+  const handleCreateOperator = useCallback(async () => {
+    const resp = await createAnOperator({
+      name: operatorName,
+      baseAgent: agentId,
+      instruction: description,
+      tools: agent?.tools.map((tool) => ({
+        name: tool.name,
+        params: tool.params?.map((param) => ({
+          name: param.name,
+          value: toolParams[param.name],
+        })),
+      })),
+    });
+    if (resp?.error) {
+      return;
+    }
+    router.replace("/app/operators");
+  }, [operatorName, agentId, description, toolParams, agent, router]);
   useEffect(() => {
     if (!agentId) {
       return;
@@ -160,7 +185,7 @@ export default function CreateOperatorForm({
                         </HoverCard>
                       </span>
                     </AccordionTrigger>
-                    <AccordionContent className="py-4">
+                    <AccordionContent className="py-4 px-1">
                       <div className="grid gap-4">
                         {(!tool.params || tool.params.length === 0) && (
                           <div className="text-slate-500 text-sm">
@@ -221,7 +246,9 @@ export default function CreateOperatorForm({
             </Button>
             <Button
               className="btn"
-              onClick={() => setCurrentStep("basic_details")}
+              onClick={() => {
+                handleCreateOperator();
+              }}
             >
               Create Operator
             </Button>

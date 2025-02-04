@@ -15,7 +15,11 @@ export const createAnOperator = async (operatorData: DeepPartial<Operator>) => {
   const { username } = authResult.data;
   const operator = OperatorsRepo.create(operatorData);
   operator.user = username;
-  await OperatorsRepo.save(operator);
+  const createdOperator = OperatorsRepo.save(operator);
+  const data = JSON.parse(JSON.stringify(createdOperator));
+  await {
+    data
+  };
 };
 
 export const getUserOperators = async () => {
@@ -36,12 +40,11 @@ export const getUserOperators = async () => {
       : [], // Ensure it's an array even if null/undefined
   }));
   return {
-    data:sanitizedOperators,
-
+    data: sanitizedOperators,
   };
 };
 
-export const deleteOperator = async (opetatorId:string)=>{
+export const deleteOperator = async (opetatorId: string) => {
   const authResult = await checkAuth();
   if (!authResult.data) {
     return {
@@ -64,4 +67,4 @@ export const deleteOperator = async (opetatorId:string)=>{
   return {
     data: "OperatorDeleted",
   };
-}
+};
