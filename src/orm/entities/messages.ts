@@ -21,7 +21,7 @@ export class Message extends BaseEntity {
   session: Awaited<ChatSession>;
 
   @Column()
-  sender: "user" | "model";
+  sender: "user" | "assistant";
 
   @Column()
   text: string;
