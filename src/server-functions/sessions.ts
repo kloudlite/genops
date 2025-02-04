@@ -1,7 +1,8 @@
 "use server";
 
-import { MessagesRepo, ChatSessionsRepo } from "@/orm";
+import { MessagesRepo, ChatSessionsRepo, OperatorsRepo } from "@/orm";
 import { checkAuth } from "./auth";
+import fetchStream from "@/lib/stream-reader";
 
 export const createChatSession = async (
   operatorId: string,

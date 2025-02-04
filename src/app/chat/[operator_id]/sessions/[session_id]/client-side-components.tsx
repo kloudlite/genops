@@ -1,53 +1,44 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { sendMessage } from "@/server-functions/messages";
-import { streamData } from "@/server-functions/stream";
+// import { streamData } from "@/server-functions/stream";
 import { ArrowUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
-export const SendMessage = ({ session_id }: { session_id: string }) => {
+export const SendMessage = ({ session_id, startStream }: { session_id: string, startStream: boolean }) => {
   const [msg, setMsg] = useState("");
   const router = useRouter();
   const handler = useCallback(async () => {
-    if (msg) {
+    if (msg || startStream) {
       const resp = await sendMessage(session_id, msg);
-      if (resp.error) {
+      if ((resp as { error: string })?.error) {
         return;
       }
-      setMsg("");
+      const stream = resp as ReadableStream<{data: string}>;
+      const reader = stream.getReader();
+      let content = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        content += value;
+      }
+      // setMsg(content);
       router.refresh();
     }
   }, [msg, session_id, router]);
   useEffect(() => {
-    (async () => {
-      const stream = await streamData();
-      console.log("hi");
-      const reader = stream.getReader();
-      const decoder = new TextDecoder();
-      const read = async () => {
-        const { done, value } = await reader.read();
-        if (done) {
-          return;
-        }
-        console.log(value);
-        read();
-        return;
-        const data = JSON.parse(decoder.decode(value));
-        if (data.type === "message") {
-          router.refresh();
-        }
-        
-      };
-      read();
-    })();
-  });
+    if (startStream) {
+      handler();
+    }
+  },[])
   return (
     <form
       className="relative flex gap-1 max-w-full w-3/4 group"
       onSubmit={async (e) => {
         e.preventDefault();
         handler();
+        setMsg("")
       }}
     >
       <div className="w-full bg-white rounded-3xl focus-within:shadow-sm focus-within:border-slate-400 overflow-clip border border-slate-200 transition-all p-4">
@@ -58,12 +49,13 @@ export const SendMessage = ({ session_id }: { session_id: string }) => {
           onChange={(e) => {
             setMsg(e.target.value);
           }}
-          onKeyDown={(e) => {
+          onKeyUp={(e) => {
             if (e.key === "Enter") {
               if (!e.shiftKey) {
-                handler();
-                e.preventDefault();
-                e.currentTarget.blur();
+                e.preventDefault(); // Prevent default behavior (e.g., new line)
+                handler(); // Send the message
+                setMsg(""); // Clear the text area
+                e.currentTarget.blur(); // Remove focus from the text area
               }
             }
           }}

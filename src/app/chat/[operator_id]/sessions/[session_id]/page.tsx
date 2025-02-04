@@ -13,6 +13,8 @@ const Page = async ({
     return "";
   }
   const messages = resp.data;
+  const startStream = !resp.sessionIsLocked && messages?.[0].sender == "user";
+
   return (
     <div className="flex flex-col h-screen relative">
       <div className="flex-1 overflow-y-auto p-4 flex flex-col">
@@ -31,7 +33,7 @@ const Page = async ({
         </div>
       </div>
       <div className="flex items-center justify-center pb-6 absolute bottom-0 w-full">
-        <SendMessage session_id={session_id} />
+        <SendMessage session_id={session_id} startStream={startStream} />
       </div>
     </div>
   );
