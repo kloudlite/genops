@@ -23,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Agent } from "@/orm/entities/agents";
 import { getAgent } from "@/server-functions/agents";
 import { AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, ArrowRight, HelpCircle, ListRestart } from "lucide-react";
+import { ArrowLeft, ArrowRight, HelpCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
