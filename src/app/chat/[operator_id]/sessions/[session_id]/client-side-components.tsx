@@ -1,11 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { sendMessage } from "@/server-functions/messages";
-import { ArrowUp, Send } from "lucide-react";
+import { streamData } from "@/server-functions/stream";
+import { ArrowUp } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const SendMessage = ({ session_id }: { session_id: string }) => {
   const [msg, setMsg] = useState("");
@@ -20,6 +19,29 @@ export const SendMessage = ({ session_id }: { session_id: string }) => {
       router.refresh();
     }
   }, [msg, session_id, router]);
+  useEffect(() => {
+    (async () => {
+      const stream = await streamData();
+      console.log("hi");
+      const reader = stream.getReader();
+      const decoder = new TextDecoder();
+      const read = async () => {
+        const { done, value } = await reader.read();
+        if (done) {
+          return;
+        }
+        console.log(value);
+        read();
+        return;
+        const data = JSON.parse(decoder.decode(value));
+        if (data.type === "message") {
+          router.refresh();
+        }
+        
+      };
+      read();
+    })();
+  });
   return (
     <form
       className="relative flex gap-1 max-w-full w-3/4 group"
