@@ -5,6 +5,7 @@ import { Agent } from "./entities/agents";
 import { Operator } from "./entities/operators";
 import { ChatSession } from "./entities/sessions";
 import { Message } from "./entities/messages";
+import { Project } from "./entities/project";
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -14,7 +15,7 @@ const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   synchronize: true,
-  entities: [User, Operator, Agent, ChatSession, Message],
+  entities: [User, Operator, Agent, ChatSession, Message, Project],
   logging: false,
 });
 
@@ -25,3 +26,4 @@ export const OperatorsRepo = AppDataSource.getRepository(Operator);
 export const AgentsRepo = AppDataSource.getRepository(Agent);
 export const ChatSessionsRepo = AppDataSource.getRepository(ChatSession);
 export const MessagesRepo = AppDataSource.getRepository(Message);
+export const ProjectsRepo = AppDataSource.getRepository(Project);

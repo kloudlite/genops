@@ -1,4 +1,5 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, Index, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Project } from "./project";
 
 @Entity()
 export class Agent extends BaseEntity {
@@ -39,4 +40,7 @@ export class Agent extends BaseEntity {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @ManyToMany(() => Project, project => project.agents)
+  projects: Project[];
 }
