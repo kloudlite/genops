@@ -1,18 +1,17 @@
 "use client";
 import { deleteChatSession } from "@/server-functions/sessions";
+import { TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function DeleteButton({ id }: { id: string }) {
   const router = useRouter();
   return (
-    <button
+    <TrashIcon
       onClick={async () => {
         await deleteChatSession(id);
         router.refresh();
       }}
-      className="px-4 py-2 bg-red-500 text-white rounded-md ml-2"
-    >
-      Delete
-    </button>
+      className="text-red-500 hover:text-red-700 cursor-pointer"
+    />
   );
 }

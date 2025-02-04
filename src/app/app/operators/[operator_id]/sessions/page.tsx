@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { listUserSessionsForOperator } from "@/server-functions/sessions";
-import { MessageSquareIcon } from "lucide-react";
+import { DeleteIcon, Icon, MessageSquareIcon } from "lucide-react";
+import CreateButton from "./create-chat-button";
+import DeleteButton from "./delete-chat-button";
 
 export default async function Page(params: Promise<{ operator_id: string }>) {
   const { operator_id } = await params;
@@ -24,13 +26,19 @@ export default async function Page(params: Promise<{ operator_id: string }>) {
               return (
                 <div key={session.id} className="p-4 border-b">
                   <div>{session.id}</div>
+                      <DeleteButton
+                    id={session.id}
+                  />
                 </div>
               );
             })
           }
         </div>
       </div>
-      <div>Chat</div>
+      <div className="m-2">
+        Chat
+        <CreateButton/>
+      </div>
     </div>
   );
 }

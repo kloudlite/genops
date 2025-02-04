@@ -18,7 +18,7 @@ export default function CreateButton() {
         await createChatSession(operatorId, "default-chat");
         router.refresh();
       }}
-      className="px-4 py-2 bg-blue-500 text-white rounded-md"
+      className="px-4 py-2 bg-blue-400 text-white rounded-md hover:bg-blue-500"
     >
       Create Chat Session
     </button>

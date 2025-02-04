@@ -9,27 +9,47 @@ export default function CreateButton() {
     <button
       onClick={async () => {
         await createAnAgent({
-          name: "Base",
+          name: "Github Agent",
           developer: "Mohit",
-          desc: "Test desc",
-          modelProvider: "chatgpt",
-          model: "gpt-3.5-turbo",
+          desc: "Checks if any new pull requests are available",
+          modelProvider: "openai",
+          model: "gpt-4o",
           tools: [
             {
-              name: "Test",
-              desc: "Test desc",
-              source: "Test source",
+              name: "Github Tool",
+              desc: "Checks if any new pull requests are available",
+              source: "Github",
+              params: [
+                {
+                  name: "username",
+                  type: "string",
+                  required: true,
+                  defaultValue: "nxtcoder36",
+                },
+                {
+                  name: "repo",
+                  type: "string",
+                  required: true,
+                  defaultValue: "kloudlite/genops",
+                },
+                {
+                  name: "branch",
+                  type: "string",
+                  required: true,
+                  defaultValue: "main",
+                },
+              ],
             },
-            {
-              name: "Test2",
-              desc: "Test desc",
-              source: "Test source",
-            },
-            {
-              name: "Test3",
-              desc: "Test desc",
-              source: "Test source",
-            },
+            // {
+            //   name: "Test2",
+            //   desc: "Test desc",
+            //   source: "Test source",
+            // },
+            // {
+            //   name: "Test3",
+            //   desc: "Test desc",
+            //   source: "Test source",
+            // },
           ],
         });
         router.refresh()
