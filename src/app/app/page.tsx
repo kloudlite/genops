@@ -1,6 +1,6 @@
-import { checkAuth } from "@/server-functions/auth";
+import { redirect } from "next/navigation";
 
-export default async function Page(){
-  await checkAuth()
-  return <></>
+export default function Page() {
+  redirect("/app/operators");
+  return null;
 }

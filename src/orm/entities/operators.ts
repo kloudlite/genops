@@ -39,6 +39,6 @@ export class Operator extends BaseEntity {
   chatSessions: ChatSession[];
 
   @Index()
-  @CreateDateColumn()
+  @CreateDateColumn({name: "created_at"})
   createdAt: Date;
 }

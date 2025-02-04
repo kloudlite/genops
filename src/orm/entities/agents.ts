@@ -16,7 +16,7 @@ export class Agent extends BaseEntity {
   desc: string;
   
   @Index()
-  @Column()
+  @Column({name: "model_provider"})
   modelProvider: string;
 
   @Index()

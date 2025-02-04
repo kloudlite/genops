@@ -12,6 +12,8 @@ type Response<T> = {
 
 type SessionPayload = {
   username: string;
+  email: string;
+  name: string
   expiresAt: Date;
 };
 
@@ -60,7 +62,12 @@ export const login = async ({
   const cookieStore = await cookies();
   const expiresAt = new Date();
   expiresAt.setMonth(expiresAt.getMonth() + 1);
-  const session = await encrypt({ username: user.username, expiresAt });
+  const session = await encrypt({
+    username: user.username,
+    name: user.name,
+    email: user.email,
+    expiresAt,
+  });
 
   cookieStore.set("session", session, {
     httpOnly: true,
@@ -125,28 +132,44 @@ export const signup = async ({
   return { data: true };
 };
 
-export const checkAuth = async () => {
+export const checkAuth = async ({
+  doRedirect = true,
+}: {
+  doRedirect?: boolean;
+} = {}): Promise<Response<SessionPayload>> => {
   const cookieStore = await cookies();
   const session = cookieStore.get("session");
 
   if (!session) {
-    redirect("/auth/signin")
+    if (doRedirect) redirect("/auth/signin");
     return { error: "NoSession" };
   }
 
   const payload = await decrypt(session.value);
 
   if (payload instanceof Error) {
-    redirect("/auth/signin")
+    if (doRedirect) redirect("/auth/signin");
     return { error: "InvalidSession" };
   }
 
-  const { username, expiresAt } = payload as SessionPayload;
+  const { expiresAt } = payload as SessionPayload;
 
   if (new Date(expiresAt) < new Date()) {
-    redirect("/auth/signin")
+    if (doRedirect) redirect("/auth/signin");
     return { error: "SessionExpired" };
   }
-  
-  return { data: { username } };
+
+  return { data: payload as SessionPayload };
+};
+
+export const logout = async () => {
+  const cookieStore = await cookies();
+  cookieStore.set("session", "", {
+    httpOnly: true,
+    secure: true,
+    expires: new Date(0),
+    sameSite: "lax",
+  });
+  redirect("/auth/signin");
+  return { data: true };
 };

@@ -19,6 +19,6 @@ export class User extends BaseEntity {
   @Column()
   email: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({name: "created_at"})
   createdAt: Date;
 }

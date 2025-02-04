@@ -31,6 +31,6 @@ export class ChatSession extends BaseEntity {
   @JoinColumn()
   operator: Awaited<Operator>;
 
-  @CreateDateColumn()
+  @CreateDateColumn({name: "created_at"})
   createdAt: Date;
 }

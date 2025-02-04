@@ -7,7 +7,7 @@ import { ScanFace } from "lucide-react";
 const Page = () => {
   return (
     <div className="flex flex-col items-center justify-center p-6 h-screen">
-      <Card className="grid max-w-sm w-full">
+      <Card className="grid max-w-sm w-full rounded-none shadow-none">
         <CardHeader>
             <div className="flex flex-col">
             <h2 className="text-xl font-semibold flex gap-1">

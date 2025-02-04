@@ -15,7 +15,9 @@ export class Message extends BaseEntity {
   id: string;
 
   @ManyToOne(() => ChatSession, (session) => session.messages, { onDelete: "CASCADE" })
-  @JoinColumn()
+  @JoinColumn({
+    name: "session_id",
+  })
   session: Awaited<ChatSession>;
 
   @Column()

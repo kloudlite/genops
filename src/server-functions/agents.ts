@@ -18,8 +18,9 @@ export const getAgent = async (agentId: string) => {
       error: "AgentNotFound",
     };
   }
+  const agentData = JSON.parse(JSON.stringify(agent));
   return {
-    data: agent,
+    data: agentData,
   };
 }
 
@@ -35,6 +36,24 @@ export const createAnAgent = async (agentData: DeepPartial<Agent>) => {
   agent.developer = username;
   await AgentsRepo.save(agent);
 };
+
+export const getAllAgentsMetadata = async () => {
+  try {
+    const agents = await AgentsRepo.find();
+    return {
+      data: {
+        agents: agents.map((agent) => ({
+          id: agent.id,
+          name: agent.name,
+        })),
+      },
+    };
+  } catch (error) {
+    return {
+      error: (error as Error).message,
+    };
+  }
+}
 
 export const getDeveloperAgents = async () => {
   const authResult = await checkAuth();
