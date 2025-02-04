@@ -34,6 +34,7 @@ export default function CreateOperatorForm({
   const [operatorName, setOperatorName] = useState("");
   const [agentId, setAgentId] = useState("");
   const [description, setDescription] = useState("");
+  const [toolParams, setToolParams] = useState<Record<string, string>>({});
   const [agent, setAgent] = useState<Agent | undefined>(undefined);
   useEffect(() => {
     if (!agentId) {
@@ -114,12 +115,73 @@ export default function CreateOperatorForm({
             <h1 className="text-lg font-bold">Setup Tools</h1>
           </CardHeader>
           <CardContent className="grid gap-4">
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full"
+              orientation="horizontal"
+            >
               {agent?.tools.map((tool) => {
                 return (
-                  <AccordionItem key={tool.name} value={tool.name}>
-                    <AccordionTrigger>{tool.name}</AccordionTrigger>
-                    <AccordionContent>{tool.desc}</AccordionContent>
+                  <AccordionItem
+                    key={tool.name}
+                    value={tool.name}
+                    disabled={tool.params?.length == 0}
+                  >
+                    <AccordionTrigger>
+                      <div className="flex justify-between w-full items-center">
+                        <span>{tool.name}</span>
+                        <span className="px-4 text-xs text-slate-500">
+                          {tool.desc}
+                        </span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {(!tool.params || tool.params.length === 0) && (
+                        <div className="text-slate-500 text-sm">
+                          No parameters required
+                        </div>
+                      )}
+                      <div className="grid gap-4">
+                        {tool.params?.map((param) => {
+                          return (
+                            <div
+                              key={param.name}
+                              className="grid w-full items-center gap-1.5"
+                            >
+                              <Label>{param.name}</Label>
+                              {param.type === "string" && (
+                                <Input
+                                  id={param.name}
+                                  placeholder={param.name}
+                                  value={toolParams[param.name]}
+                                  onChange={(e) =>
+                                    setToolParams({
+                                      ...toolParams,
+                                      [param.name]: e.target.value,
+                                    })
+                                  }
+                                />
+                              )}
+                              {param.type === "secure-string" && (
+                                <Input
+                                  id={param.name}
+                                  placeholder={param.name}
+                                  value={toolParams[param.name]}
+                                  type="password"
+                                  onChange={(e) =>
+                                    setToolParams({
+                                      ...toolParams,
+                                      [param.name]: e.target.value,
+                                    })
+                                  }
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </AccordionContent>
                   </AccordionItem>
                 );
               })}
