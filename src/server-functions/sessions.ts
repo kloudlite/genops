@@ -1,8 +1,7 @@
 "use server";
 
-import { MessagesRepo, ChatSessionsRepo, OperatorsRepo } from "@/orm";
+import { MessagesRepo, ChatSessionsRepo } from "@/orm";
 import { checkAuth } from "./auth";
-import fetchStream from "@/lib/stream-reader";
 
 export const createChatSession = async (
   operatorId: string,
@@ -56,7 +55,9 @@ export const deleteChatSession = async (sessionId: string) => {
     return { error: "AuthenticationFailed" };
   }
   const { username } = authResult.data;
-  const chatSession = await ChatSessionsRepo.findOne({ where: { id: sessionId } });
+  const chatSession = await ChatSessionsRepo.findOne({
+    where: { id: sessionId },
+  });
   if (!chatSession) {
     return { error: "SessionNotFound" };
   }

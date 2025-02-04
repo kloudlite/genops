@@ -1,7 +1,7 @@
 import { Operator } from "@/orm/entities/operators";
 
 export default async function fetchStream(messages: object[], operator: Operator, onMessage: (message: string | null, done: boolean) => void) {
-  const response = await fetch("http://localhost:3000/chat", {
+  const response = await fetch("http://localhost:4000/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

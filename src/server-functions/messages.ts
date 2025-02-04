@@ -3,7 +3,6 @@
 import { MessagesRepo, ChatSessionsRepo, OperatorsRepo } from "@/orm";
 import { checkAuth } from "./auth";
 import fetchStream from "@/lib/stream-reader";
-import test from "node:test";
 
 export const sendMessage = async (sessionId: string,text: string) => {
   const authResult = await checkAuth();
@@ -39,7 +38,7 @@ export const sendMessage = async (sessionId: string,text: string) => {
     take: 20,
   });
   
-  let oldMessages = messages.map((message) => ({
+  const oldMessages = messages.map((message) => ({
     content: message.text,
     role: message.sender === "user" ? "user" : "assistant",
   }));
@@ -110,7 +109,7 @@ export const getSessionMessages = async (
     skip: offset * limit,
   });
   return {
-    data: messages,
+    data: JSON.parse(JSON.stringify(messages)),
     sessionIsLocked: session.locked
   };
 };
