@@ -1,6 +1,6 @@
 "use server";
 
-import { MessagesRepo, ChatSessionsRepo } from "@/orm";
+import { MessagesRepo, ChatSessionsRepo, OperatorsRepo } from "@/orm";
 import { checkAuth } from "./auth";
 
 export const createChatSession = async (
@@ -36,6 +36,9 @@ export const listUserSessionsForOperator = async (operatorId: string) => {
     };
   }
   const { username } = authResult.data;
+  const operator = await OperatorsRepo.findOne({
+    where: { id: operatorId },
+  });
   const sessions = await ChatSessionsRepo.find({
     relations: ["operator"],
     where: {
@@ -46,7 +49,7 @@ export const listUserSessionsForOperator = async (operatorId: string) => {
     },
     loadRelationIds: true,
   });
-  return { data: sessions };
+  return { data: sessions, operatorName: operator?.name };
 };
 
 export const deleteChatSession = async (sessionId: string) => {

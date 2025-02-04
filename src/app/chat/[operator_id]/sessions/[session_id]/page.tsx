@@ -23,6 +23,7 @@ const Page = async ({
         messages as {
           id: string;
           text: string;
+          sender: string;
         }[]
       }
     />

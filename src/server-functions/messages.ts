@@ -4,14 +4,17 @@ import { MessagesRepo, ChatSessionsRepo, OperatorsRepo } from "@/orm";
 import { checkAuth } from "./auth";
 import fetchStream from "@/lib/stream-reader";
 
-export const sendMessage = async (sessionId: string,text: string) => {
+export const sendMessage = async (sessionId: string, text: string) => {
   const authResult = await checkAuth();
   if (!authResult.data) {
     return {
       error: "AuthenticationFailed",
     };
   }
-  const chatSession = await ChatSessionsRepo.findOne({ where: { id: sessionId }, relations: ["operator"] });
+  const chatSession = await ChatSessionsRepo.findOne({
+    where: { id: sessionId },
+    relations: ["operator"],
+  });
   if (chatSession == null) {
     return {
       error: "Invalid session",
@@ -20,16 +23,18 @@ export const sendMessage = async (sessionId: string,text: string) => {
   if (chatSession.locked) {
     return {
       error: "SessionLocked",
-    }
+    };
   }
   chatSession.locked = true;
   await ChatSessionsRepo.save(chatSession);
-  console.log("chatSession", chatSession)
-  const operator = await OperatorsRepo.findOne({ where: { id: chatSession.operator.id } });
+  console.log("chatSession", chatSession);
+  const operator = await OperatorsRepo.findOne({
+    where: { id: chatSession.operator.id },
+  });
   if (!operator) {
     return {
       error: "OperatorNotFound",
-    }
+    };
   }
 
   const messages = await MessagesRepo.find({
@@ -37,14 +42,14 @@ export const sendMessage = async (sessionId: string,text: string) => {
     order: { timestamp: "DESC" },
     take: 20,
   });
-  
+
   const oldMessages = messages.map((message) => ({
     content: message.text,
     role: message.sender === "user" ? "user" : "assistant",
   }));
-  
+
   if (text) {
-    console.log("text calling push", text)
+    console.log("text calling push", text);
     oldMessages.push({
       content: text,
       role: "user",
@@ -56,34 +61,46 @@ export const sendMessage = async (sessionId: string,text: string) => {
       text: text,
     });
     await MessagesRepo.save(userMessage);
-  };
-  const readableStream = new ReadableStream<{ data: string }>({
+  }
+  const readableStream = new ReadableStream<{
+    data?: string | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    func?: { name: string; args: any };
+  }>({
     async start(controller) {
-      await fetchStream(oldMessages, operator, async (chunk, done) => {
-        if (done) {
-          const message = MessagesRepo.create({
-            session: chatSession,
-            sender: "assistant",
-            text: chunk as string,
-          });
-          await MessagesRepo.save(message);
-          chatSession.locked = false;
+      await fetchStream(
+        oldMessages,
+        operator,
+        async (chunk, done) => {
+          if (done) {
+            const message = MessagesRepo.create({
+              session: chatSession,
+              sender: "assistant",
+              text: chunk as string,
+            });
+            await MessagesRepo.save(message);
+            chatSession.locked = false;
+            await ChatSessionsRepo.save(chatSession);
+            controller.close();
+            return;
+          }
+          controller.enqueue({ data: chunk });
+        },
+        async (title)=>{
+          chatSession.name = title;
           await ChatSessionsRepo.save(chatSession);
-          controller.close();
-          return;
         }
-        controller.enqueue({ data: chunk || "" });
-      });
+      );
     },
   });
 
-  return readableStream
+  return readableStream;
 };
 
 export const getSessionMessages = async (
   sessionId: string,
   offset: number = 0,
-  limit: number = 100,
+  limit: number = 100
 ) => {
   const authResult = await checkAuth();
   if (!authResult.data) {
@@ -110,6 +127,6 @@ export const getSessionMessages = async (
   });
   return {
     data: JSON.parse(JSON.stringify(messages)),
-    sessionIsLocked: session.locked
+    sessionIsLocked: session.locked,
   };
 };

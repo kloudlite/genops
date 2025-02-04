@@ -29,20 +29,25 @@ export const Chat = ({
       if ((resp as { error: string })?.error) {
         return;
       }
-      const stream = resp as ReadableStream<{ data: string }>;
+      const stream = resp as ReadableStream<{
+        data: string;
+      }>;
       const reader = stream.getReader();
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
+
         setStreamingMessage((c) => {
           return c + value.data;
         });
       }
-      setStreamingMessage("");
-      setUserMessage("");
       router.refresh();
     }
   }, [msg, session_id, router, startStream]);
+  useEffect(() => {
+    setStreamingMessage("");
+    setUserMessage("");
+  }, [messages]);
   useEffect(() => {
     if (startStream) {
       handler();
@@ -53,28 +58,21 @@ export const Chat = ({
       <div className="flex-1 overflow-y-auto p-4 flex flex-col">
         <div className="max-w-full w-3/4 mx-auto flex flex-col-reverse gap-4">
           <div className="h-[100px]"></div>
-
-          {streamingMessage && (
-            <div className="flex justify-start">
-              <div
-                className="bg-slate-100 p-3 px-6 rounded-lg flex-wrap text-left"
-                dangerouslySetInnerHTML={{
-                  __html: md.render(streamingMessage),
-                }}
-              />
-            </div>
-          )}
-          {userMessage && (
-            <div className="flex justify-end">
-              <div
-                className="bg-slate-100 p-3 px-6 rounded-lg flex-wrap text-right"
-                dangerouslySetInnerHTML={{
-                  __html: md.render(userMessage),
-                }}
-              />
-            </div>
-          )}
-          {messages?.map((msg) => {
+          {[
+            ...(streamingMessage
+              ? [
+                  {
+                    id: "generating-last",
+                    sender: "assistant",
+                    text: streamingMessage,
+                  },
+                ]
+              : []),
+            ...(userMessage
+              ? [{ id: "user-last", sender: "user", text: userMessage }]
+              : []),
+            ...messages,
+          ]?.map((msg) => {
             return (
               <div
                 key={msg.id}
@@ -84,9 +82,11 @@ export const Chat = ({
                 })}
               >
                 <div
-                  className={cn("bg-slate-100 p-3 px-6 rounded-lg flex-wrap", {
-                    "text-right": msg.sender == "user",
-                    "text-left": msg.sender == "assistant",
+                  className={cn(" p-3 px-6 rounded-xl flex-wrap max-w-6xl", {
+                    "text-right bg-green-600 text-white rounded-br-none":
+                      msg.sender == "user",
+                    "text-left bg-slate-300 rounded-bl-none":
+                      msg.sender == "assistant",
                   })}
                   dangerouslySetInnerHTML={{ __html: md.render(msg.text) }}
                 />
@@ -103,7 +103,7 @@ export const Chat = ({
             handler();
           }}
         >
-          <div className="w-full bg-white rounded-3xl focus-within:shadow-sm focus-within:border-slate-400 overflow-clip border border-slate-200 transition-all p-4">
+          <div className="w-full bg-white rounded-3xl focus-within:shadow-lg shadow-sm overflow-clip border border-slate-200 transition-all p-4">
             <textarea
               rows={5}
               value={msg}
