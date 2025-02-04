@@ -11,10 +11,9 @@ const Page = async () => {
   const agentData = resp.data;
   return (
     <div className="min-h-screen grid grid-cols-2">
-      <div className="border-r  p-4">
-        <h1 className="text-2xl font-bold p-4">Create Operator</h1>
+      <div className="border-r p-4 flex gap-4 flex-col">
+        <CreateOperatorForm  agentData={agentData?.agents}/>
       </div>
-      <CreateOperatorForm  agentData={agentData?.agents}/>
     </div>
   );
 };

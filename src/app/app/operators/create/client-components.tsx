@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import cn from "classnames";
 import {
   Select,
   SelectContent,
@@ -22,8 +23,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Agent } from "@/orm/entities/agents";
 import { getAgent } from "@/server-functions/agents";
 import { AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, ArrowRight, ListRestart } from "lucide-react";
+import { ArrowLeft, ArrowRight, HelpCircle, ListRestart } from "lucide-react";
 import { useEffect, useState } from "react";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export default function CreateOperatorForm({
   agentData,
@@ -50,12 +52,30 @@ export default function CreateOperatorForm({
     })();
   }, [agentId]);
   return (
-    <div className="flex items-center justify-center flex-col gap-4">
+    <Card className="grid max-w-xl w-full rounded-none shadow-none border-none">
+      <CardHeader className="pb-8">
+        <h1 className="text-2xl font-bold">Create Operator</h1>
+        <div className="flex gap-4">
+          <h1
+            className={cn("text-lg", {
+              "text-slate-400": currentStep !== "basic_details",
+              "font-medium": currentStep == "basic_details",
+            })}
+          >
+            Basic Details
+          </h1>
+          <h1
+            className={cn("text-lg", {
+              "text-slate-400": currentStep !== "setup_tools",
+              "font-medium": currentStep == "setup_tools",
+            })}
+          >
+            Tools Setup
+          </h1>
+        </div>
+      </CardHeader>
       {currentStep === "basic_details" && (
-        <Card className="grid max-w-sm w-full rounded-none shadow-none">
-          <CardHeader>
-            <h1 className="text-lg font-bold">Basic Details</h1>
-          </CardHeader>
+        <>
           <CardContent className="grid gap-4">
             <div className="grid w-full items-center gap-1.5">
               <Label>Name</Label>
@@ -93,11 +113,7 @@ export default function CreateOperatorForm({
               />
             </div>
           </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button className="btn" variant={"outline"}>
-              <ListRestart />
-              Reset
-            </Button>
+          <CardFooter className="flex justify-end">
             <Button
               className="btn"
               disabled={!operatorName || !agent || !description}
@@ -107,13 +123,10 @@ export default function CreateOperatorForm({
               <ArrowRight />
             </Button>
           </CardFooter>
-        </Card>
+        </>
       )}
       {currentStep === "setup_tools" && (
-        <Card className="grid max-w-sm w-full rounded-none shadow-none">
-          <CardHeader>
-            <h1 className="text-lg font-bold">Setup Tools</h1>
-          </CardHeader>
+        <>
           <CardContent className="grid gap-4">
             <Accordion
               type="single"
@@ -124,25 +137,36 @@ export default function CreateOperatorForm({
               {agent?.tools.map((tool) => {
                 return (
                   <AccordionItem
+                    className="border-slate-100"
                     key={tool.name}
                     value={tool.name}
                     disabled={tool.params?.length == 0}
                   >
-                    <AccordionTrigger>
-                      <div className="flex justify-between w-full items-center">
-                        <span>{tool.name}</span>
-                        <span className="px-4 text-xs text-slate-500">
-                          {tool.desc}
-                        </span>
-                      </div>
+                    <AccordionTrigger className="group">
+                      <span className="flex items-center justify-between gap-2 w-full">
+                        {tool.name}
+                        <HoverCard>
+                          <HoverCardTrigger className="px-2">
+                            <HelpCircle
+                              size={18}
+                              className="text-slate-500 invisible group-hover:visible"
+                            />
+                          </HoverCardTrigger>
+                          <HoverCardContent side="right">
+                            <div className="text-slate-500 text-sm">
+                              {tool.desc}
+                            </div>
+                          </HoverCardContent>
+                        </HoverCard>
+                      </span>
                     </AccordionTrigger>
-                    <AccordionContent>
-                      {(!tool.params || tool.params.length === 0) && (
-                        <div className="text-slate-500 text-sm">
-                          No parameters required
-                        </div>
-                      )}
+                    <AccordionContent className="py-4">
                       <div className="grid gap-4">
+                        {(!tool.params || tool.params.length === 0) && (
+                          <div className="text-slate-500 text-sm">
+                            No parameters required
+                          </div>
+                        )}
                         {tool.params?.map((param) => {
                           return (
                             <div
@@ -154,7 +178,7 @@ export default function CreateOperatorForm({
                                 <Input
                                   id={param.name}
                                   placeholder={param.name}
-                                  value={toolParams[param.name]}
+                                  value={toolParams[param.name] || ""}
                                   onChange={(e) =>
                                     setToolParams({
                                       ...toolParams,
@@ -167,7 +191,7 @@ export default function CreateOperatorForm({
                                 <Input
                                   id={param.name}
                                   placeholder={param.name}
-                                  value={toolParams[param.name]}
+                                  value={toolParams[param.name] || ""}
                                   type="password"
                                   onChange={(e) =>
                                     setToolParams({
@@ -202,13 +226,8 @@ export default function CreateOperatorForm({
               Create Operator
             </Button>
           </CardFooter>
-        </Card>
+        </>
       )}
-
-      <div className="flex gap-2">
-        <div className="w-12 h-2 bg-black rounded-full" />
-        <div className="w-4 h-2 bg-slate-300 rounded-full" />
-      </div>
-    </div>
+    </Card>
   );
 }
