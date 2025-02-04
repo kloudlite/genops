@@ -2,6 +2,7 @@
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { logout } from "@/server-functions/auth";
+
 import { LogOut } from "lucide-react";
 
 import { redirect } from "next/navigation";

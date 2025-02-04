@@ -40,7 +40,7 @@ const Page = async () => {
         )}
         {operators?.map((operator) => {
           return (
-            <Link key={operator.id} href={`/app/operators/${operator.id}`}>
+            <Link key={operator.id} href={`/chat/${operator.id}`}>
               <Card className="rounded-none shadow-none hover:shadow-lg transition-all cursor-pointer">
                 <CardHeader>
                   <CardTitle className="flex justify-between flex-row items-center">

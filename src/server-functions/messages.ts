@@ -3,7 +3,7 @@
 import { MessagesRepo, ChatSessionsRepo } from "@/orm";
 import { checkAuth } from "./auth";
 
-export const sendMessage = async (text: string, sessionId: string) => {
+export const sendMessage = async (sessionId: string,text: string) => {
   const authResult = await checkAuth();
   if (!authResult.data) {
     return {
@@ -22,12 +22,15 @@ export const sendMessage = async (text: string, sessionId: string) => {
     text: text,
   });
   await MessagesRepo.save(message);
+  return {
+    data: true
+  }
 };
 
 export const getSessionMessages = async (
   sessionId: string,
-  offset: number,
-  limit: number
+  offset: number = 0,
+  limit: number = 100,
 ) => {
   const authResult = await checkAuth();
   if (!authResult.data) {

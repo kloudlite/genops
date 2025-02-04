@@ -10,7 +10,7 @@ type Response<T> = {
   error?: string;
 };
 
-type SessionPayload = {
+export type SessionPayload = {
   username: string;
   email: string;
   name: string

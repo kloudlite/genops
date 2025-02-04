@@ -1,15 +1,10 @@
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { checkAuth } from "@/server-functions/auth";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SignoutButton } from "./client-components";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
 
 export default async function Layout({
   children,
@@ -24,7 +19,9 @@ export default async function Layout({
         <header className="border-b">
           <nav className="flex gap-2 max-w-screen-2xl mx-auto border-x p-4 items-center justify-between">
             <div className="flex items-center gap-2">
-              <Link href="/app/operators" className="text-xl font-bold">GenOps</Link>
+              <Link href="/app/operators" className="text-xl font-bold">
+                GenOps
+              </Link>
               <div className="flex">
                 <Button variant="link">
                   <Link href="/app/operators">Your Operators</Link>
