@@ -27,8 +27,8 @@ export default async function Layout({
   return (
     <>
       <div className="h-screen grid grid-cols-6">
-        <div className="border-r">
-          <div className="flex justify-between items-center border-b  p-4">
+        <div className="border-r h-full overflow-y-auto">
+          <div className="flex justify-between items-center border-b p-4 sticky top-0 z-10 bg-white backdrop-blur-lg">
             <div className="flex flex-col">
               <Link href={"/app/operators"}>
                 <span className="text-sm flex items-center gap-2">
@@ -47,6 +47,81 @@ export default async function Layout({
             </Link>
           </div>
           <div>
+          {sessions.map((session) => {
+              return (
+                <Link
+                  key={session.id}
+                  href={`/chat/${operator_id}/sessions/${session.id}`}
+                >
+                  <div className={cn("p-4 border-b border-slate-100 flex justify-between items-center group", {
+                    "bg-slate-300": session_id === session.id,
+                  })}>
+                    <div>{session.name || "New Chat"}</div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        asChild
+                        className="opacity-5 group-hover:opacity-100 transition-all"
+                      >
+                        <EllipsisVertical size={18} />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent side="bottom" align="end">
+                        <DeleteChatSessionButton id={session.id} />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </Link>
+              );
+            })}
+            {sessions.map((session) => {
+              return (
+                <Link
+                  key={session.id}
+                  href={`/chat/${operator_id}/sessions/${session.id}`}
+                >
+                  <div className={cn("p-4 border-b border-slate-100 flex justify-between items-center group", {
+                    "bg-slate-300": session_id === session.id,
+                  })}>
+                    <div>{session.name || "New Chat"}</div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        asChild
+                        className="opacity-5 group-hover:opacity-100 transition-all"
+                      >
+                        <EllipsisVertical size={18} />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent side="bottom" align="end">
+                        <DeleteChatSessionButton id={session.id} />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </Link>
+              );
+            })}
+            {sessions.map((session) => {
+              return (
+                <Link
+                  key={session.id}
+                  href={`/chat/${operator_id}/sessions/${session.id}`}
+                >
+                  <div className={cn("p-4 border-b border-slate-100 flex justify-between items-center group", {
+                    "bg-slate-300": session_id === session.id,
+                  })}>
+                    <div>{session.name || "New Chat"}</div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        asChild
+                        className="opacity-5 group-hover:opacity-100 transition-all"
+                      >
+                        <EllipsisVertical size={18} />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent side="bottom" align="end">
+                        <DeleteChatSessionButton id={session.id} />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </Link>
+              );
+            })}
             {sessions.map((session) => {
               return (
                 <Link
