@@ -1,6 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function Home() {
-  // check if user is singedin
-  return (
-    <div>Hi</div>
-  );
+  redirect("/app");
 }
