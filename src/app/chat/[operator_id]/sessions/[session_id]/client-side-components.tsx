@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { sendMessage } from "@/server-functions/messages";
+import { listenToChatSession, sendMessage } from "@/server-functions/messages";
 import { ArrowUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -21,6 +21,20 @@ export const Chat = ({
   const md = markdownit();
   const [userMessage, setUserMessage] = useState("");
   const [streamingMessage, setStreamingMessage] = useState("");
+  useEffect(() => {
+    (async () => {
+      const rs = await listenToChatSession(session_id);
+      const stream = rs as ReadableStream<Uint8Array>;
+      const decoder = new TextDecoder();
+      while(true){
+        const {done, value} = await stream.getReader().read()
+        if(done){
+          break
+        }
+        console.log(decoder.decode(value))
+      }  
+    })();
+  });
   const handler = useCallback(async () => {
     setMsg("");
     setUserMessage(msg);

@@ -17,7 +17,6 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const { operator_id, session_id } = await params;
-  console.log(session_id, operator_id);
   const resp = await listUserSessionsForOperator(operator_id);
   if (resp.error) {
     return <div>{resp.error}</div>;

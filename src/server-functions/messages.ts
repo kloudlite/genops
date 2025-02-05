@@ -3,6 +3,20 @@
 import { getMessagesRepo, getChatSessionsRepo, getOperatorsRepo } from "@/orm";
 import { checkAuth } from "./auth";
 import fetchStream from "@/lib/stream-reader";
+import nc from "@/messaging";
+
+export const listenToChatSession = async (sessionId: string) => {
+  const readableStream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      const subscription = await nc.subscribe(`chat.${sessionId}`);
+      for await (const message of subscription) {
+        controller.enqueue(message.data);
+      }
+      controller.close();
+    },
+  });
+  return readableStream;
+}
 
 export const sendMessage = async (sessionId: string, text: string) => {
   const authResult = await checkAuth();
@@ -31,7 +45,6 @@ export const sendMessage = async (sessionId: string, text: string) => {
   }
   chatSession.locked = true;
   await ChatSessionsRepo.save(chatSession);
-  console.log("chatSession", chatSession);
   const operator = await OperatorsRepo.findOne({
     where: { id: chatSession.operator.id },
   });
@@ -65,6 +78,7 @@ export const sendMessage = async (sessionId: string, text: string) => {
       text: text,
     });
     await MessagesRepo.save(userMessage);
+    nc.publish(`chat.${sessionId}`, JSON.stringify(userMessage));
   }
   const readableStream = new ReadableStream<{
     data?: string | null;

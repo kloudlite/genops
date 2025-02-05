@@ -2,6 +2,7 @@
 
 import { getMessagesRepo, getChatSessionsRepo, getOperatorsRepo } from "@/orm";
 import { checkAuth } from "./auth";
+import nc from "@/messaging";
 
 export const createChatSession = async (
   operatorId: string,
@@ -27,6 +28,7 @@ export const createChatSession = async (
     text: fistMessage,
   });
   await MessagesRepo.save(message);
+  nc.publish(`chat.${chatSession.id}`, JSON.stringify(message));
   return { data: JSON.parse(JSON.stringify(chatSession)) };
 };
 

@@ -8,4 +8,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - .data:/var/lib/postgresql/data
+      - .data/db:/var/lib/postgresql/data
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+    command: ["-js"]
+    volumes:
+      - .data/nats:/data
