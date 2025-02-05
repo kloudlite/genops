@@ -10,26 +10,26 @@ import {
 } from "typeorm";
 import { ChatSession } from "./sessions";
 
-@Entity()
+@Entity({name: "operators"})
 export class Operator extends BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", {name: "id"})
   id: string;
 
   @Index()
-  @Column()
+  @Column({name: "name"})
   name: string;
 
-  @Column()
+  @Column({name: "base_agent"})
   baseAgent: string;
 
-  @Column("text")
+  @Column("text", {name: "instruction"})
   instruction: string;
 
   @Index()
-  @Column()
+  @Column({name: "user"})
   user: string;
 
-  @Column({ type: "jsonb" })
+  @Column({ type: "jsonb", name: "tools" })
   tools: Array<{
     name: string;
     params?: Record<string, any>;
@@ -39,6 +39,7 @@ export class Operator extends BaseEntity {
   chatSessions: ChatSession[];
 
   @Index()
+  @Column({name: "created_at"})
   @CreateDateColumn({name: "created_at"})
   createdAt: Date;
 }

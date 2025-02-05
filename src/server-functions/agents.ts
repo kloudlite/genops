@@ -1,6 +1,6 @@
 "use server";
 
-import { AgentsRepo } from "@/orm";
+import { getAgentsRepo } from "@/orm";
 import { DeepPartial } from "typeorm";
 import { checkAuth } from "./auth";
 import { Agent } from "@/orm/entities/agents";
@@ -12,7 +12,8 @@ export const getAgent = async (agentId: string) => {
       error: "AuthenticationFailed",
     };
   }
-  const agent = await AgentsRepo.findOne({ where: { id: agentId } });
+  const agentRepo = await getAgentsRepo();
+  const agent = await agentRepo.findOne({ where: { id: agentId } });
   if (!agent) {
     return {
       error: "AgentNotFound",
@@ -31,6 +32,7 @@ export const createAnAgent = async (agentData: DeepPartial<Agent>) => {
       error: "AuthenticationFailed",
     };
   }
+  const AgentsRepo = await getAgentsRepo();
   const { username } = authResult.data;
   const agent = AgentsRepo.create(agentData);
   agent.developer = username;
@@ -39,6 +41,7 @@ export const createAnAgent = async (agentData: DeepPartial<Agent>) => {
 
 export const getAllAgentsMetadata = async () => {
   try {
+    const AgentsRepo = await getAgentsRepo();
     const agents = await AgentsRepo.find();
     return {
       data: {
@@ -63,6 +66,7 @@ export const getDeveloperAgents = async () => {
     };
   }
   const { username } = authResult.data;
+  const AgentsRepo = await getAgentsRepo();
   const agents = await AgentsRepo.find({ where: { developer: username } });
   return {
     data: agents,
@@ -77,6 +81,7 @@ export const deleteAgent = async (agentId: string) => {
     };
   }
   const { username } = authResult.data;
+  const AgentsRepo = await getAgentsRepo();
   const agent = await AgentsRepo.findOne({ where: { id: agentId } });
   if (!agent) {
     return {

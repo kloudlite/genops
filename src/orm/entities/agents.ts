@@ -1,19 +1,19 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, Index, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Project } from "./project";
 
-@Entity()
+@Entity({name: "agents"})
 export class Agent extends BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid",{name: "id"})
   id: string;
 
-  @Column()
+  @Column({name: "name"})
   name: string;
 
   @Index()
-  @Column()
+  @Column({name: "developer"})
   developer: string;
 
-  @Column()
+  @Column({name: "desc"})
   desc: string;
   
   @Index()
@@ -21,10 +21,10 @@ export class Agent extends BaseEntity {
   modelProvider: string;
 
   @Index()
-  @Column()
+  @Column({name: "model"})
   model: string;
 
-  @Column({ type: "jsonb" })
+  @Column({ type: "jsonb", name: "tools" })
   tools: Array<{
     name: string;
     desc: string;
@@ -38,7 +38,7 @@ export class Agent extends BaseEntity {
   }>;
   
 
-  @CreateDateColumn()
+  @CreateDateColumn({name: "created_at"})
   createdAt: Date;
 
   @ManyToMany(() => Project, project => project.agents)

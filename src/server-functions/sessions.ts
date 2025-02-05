@@ -1,6 +1,6 @@
 "use server";
 
-import { MessagesRepo, ChatSessionsRepo, OperatorsRepo } from "@/orm";
+import { getMessagesRepo, getChatSessionsRepo, getOperatorsRepo } from "@/orm";
 import { checkAuth } from "./auth";
 
 export const createChatSession = async (
@@ -14,6 +14,8 @@ export const createChatSession = async (
     };
   }
   const { username } = authResult.data;
+  const ChatSessionsRepo = await getChatSessionsRepo();
+  const MessagesRepo = await getMessagesRepo();
   const chatSession = ChatSessionsRepo.create({
     operator: { id: operatorId },
   });
@@ -36,6 +38,8 @@ export const listUserSessionsForOperator = async (operatorId: string) => {
     };
   }
   const { username } = authResult.data;
+  const OperatorsRepo = await getOperatorsRepo();
+  const ChatSessionsRepo = await getChatSessionsRepo();
   const operator = await OperatorsRepo.findOne({
     where: { id: operatorId },
   });
@@ -58,6 +62,7 @@ export const deleteChatSession = async (sessionId: string) => {
     return { error: "AuthenticationFailed" };
   }
   const { username } = authResult.data;
+  const ChatSessionsRepo = await getChatSessionsRepo();
   const chatSession = await ChatSessionsRepo.findOne({
     where: { id: sessionId },
   });

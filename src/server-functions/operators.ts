@@ -1,6 +1,6 @@
 "use server";
 
-import { OperatorsRepo } from "@/orm";
+import { getOperatorsRepo } from "@/orm";
 import { Operator } from "@/orm/entities/operators";
 import { DeepPartial } from "typeorm";
 import { checkAuth } from "./auth";
@@ -13,6 +13,7 @@ export const createAnOperator = async (operatorData: DeepPartial<Operator>) => {
     };
   }
   const { username } = authResult.data;
+  const OperatorsRepo = await getOperatorsRepo();
   const operator = OperatorsRepo.create(operatorData);
   operator.user = username;
   const createdOperator = OperatorsRepo.save(operator);
@@ -30,6 +31,7 @@ export const getUserOperators = async () => {
     };
   }
   const { username } = authResult.data;
+  const OperatorsRepo = await getOperatorsRepo();
   const operators = await OperatorsRepo.find({ where: { user: username } });
   const sanitizedOperators = operators.map((operator) => ({
     ...operator,
@@ -52,6 +54,7 @@ export const deleteOperator = async (opetatorId: string) => {
     };
   }
   const { username } = authResult.data;
+  const OperatorsRepo = await getOperatorsRepo();
   const operator = await OperatorsRepo.findOne({ where: { id: opetatorId } });
   if (!operator) {
     return {

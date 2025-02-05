@@ -1,22 +1,22 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity({name: "users"})
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('uuid', {name: "id"})
   id: string;
 
-  @Column()
+  @Column({name: "name"})
   name: string;
 
   @Index()
-  @Column()
+  @Column({name: "username"})
   username: string;
 
-  @Column()
+  @Column({name: "password"})
   password: string;
 
   @Index()
-  @Column()
+  @Column({name: "email"})
   email: string;
 
   @CreateDateColumn({name: "created_at"})

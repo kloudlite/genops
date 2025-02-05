@@ -9,9 +9,9 @@ import {
 } from "typeorm";
 import { ChatSession } from "./sessions";
 
-@Entity()
+@Entity({ name: "messages" })
 export class Message extends BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", { name: "id" })
   id: string;
 
   @ManyToOne(() => ChatSession, (session) => session.messages, { onDelete: "CASCADE" })
@@ -20,12 +20,12 @@ export class Message extends BaseEntity {
   })
   session: Awaited<ChatSession>;
 
-  @Column()
+  @Column({ name: "sender" })
   sender: "user" | "assistant";
 
-  @Column()
+  @Column({ name: "text" })
   text: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: "timestamp" })
   timestamp: Date;
 }

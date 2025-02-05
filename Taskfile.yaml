@@ -1,0 +1,14 @@
+version: "3"
+
+env:
+  IMAGE_BASE: ghcr.io/kloudlite/genops/genops
+
+tasks:
+  docker-build:
+    cmds:
+      - docker build -t {{.IMAGE_BASE}}:latest .
+      - docker push {{.IMAGE_BASE}}:latest
+
+  reset-docker-build:
+    cmds:
+      - rm -rf .next && npm run build

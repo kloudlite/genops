@@ -11,7 +11,7 @@ export default async function fetchStream(messages: object[], operator: Operator
       role: "system",
     });
   }
-  const response = await fetch("http://localhost:4000/chat", {
+  const response = await fetch(process.env.COLANG_SERVER + "/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -12,28 +12,28 @@ import {
 import { Message } from "./messages";
 import { Operator } from "./operators";
 
-@Entity()
+@Entity({name: "sessions"})
 export class ChatSession extends BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid", {name: "id"})
   id: string;
 
   @Column({ default: "" })
   name?: string;
 
   @Index()
-  @Column()
+  @Column({name: "user"})
   user: string;
 
   @OneToMany(() => Message, (message) => message.session)
   messages: Message[];
 
   @ManyToOne(() => Operator, (operator) => operator.chatSessions, { onDelete: "CASCADE" })
-  @JoinColumn()
+  @JoinColumn({name: "operator"})
   operator: Awaited<Operator>;
 
-  @Column({default: false})
+  @Column({default: false, name: "locked"})
   locked: boolean;
-
+  
   @CreateDateColumn({name: "created_at"})
   createdAt: Date;
 }

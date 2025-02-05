@@ -19,11 +19,42 @@ const AppDataSource = new DataSource({
   logging: false,
 });
 
-await AppDataSource.initialize();
+let initialized = false;
 
-export const UserRepo = AppDataSource.getRepository(User);
-export const OperatorsRepo = AppDataSource.getRepository(Operator);
-export const AgentsRepo = AppDataSource.getRepository(Agent);
-export const ChatSessionsRepo = AppDataSource.getRepository(ChatSession);
-export const MessagesRepo = AppDataSource.getRepository(Message);
-export const ProjectsRepo = AppDataSource.getRepository(Project);
+export async function getDataSource() {
+  if (!initialized) {
+    await AppDataSource.initialize();
+    initialized = true;
+  }
+  return AppDataSource;
+}
+
+export async function getUserRepo() {
+  const dataSource = await getDataSource();
+  return dataSource.getRepository(User);
+}
+
+export async function getOperatorsRepo() {
+  const dataSource = await getDataSource();
+  return dataSource.getRepository(Operator);
+}
+
+export async function getAgentsRepo() {
+  const dataSource = await getDataSource();
+  return dataSource.getRepository(Agent);
+}
+
+export async function getChatSessionsRepo() {
+  const dataSource = await getDataSource();
+  return dataSource.getRepository(ChatSession);
+}
+
+export async function getMessagesRepo() {
+  const dataSource = await getDataSource();
+  return dataSource.getRepository(Message);
+}
+
+export async function getProjectsRepo() {
+  const dataSource = await getDataSource();
+  return dataSource.getRepository(Project);
+}

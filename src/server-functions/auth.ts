@@ -1,5 +1,5 @@
 "use server";
-import { UserRepo } from "@/orm";
+import { getUserRepo } from "@/orm";
 import { createHash } from "crypto";
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
@@ -45,6 +45,7 @@ export const login = async ({
   username: string;
   password: string;
 }) => {
+  const UserRepo = await getUserRepo();
   const user = await UserRepo.findOne({ where: { username } });
 
   if (!user) {
@@ -110,6 +111,7 @@ export const signup = async ({
   if (password.length < 8) {
     return { error: "PasswordTooShort" };
   }
+  const UserRepo = await getUserRepo();
   const existingUser = await UserRepo.findOne({
     where: [{ email }, { username }],
   });
